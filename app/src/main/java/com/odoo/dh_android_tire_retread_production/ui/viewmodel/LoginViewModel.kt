@@ -27,13 +27,16 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
             try {
-                val loginResponse = repository.login(mapOf("login" to username, "password" to password))
+                val loginResponse = repository.login(mapOf(
+                    "login" to username.trim(),
+                    "password" to password.trim()
+                ))
                 if (loginResponse.success && loginResponse.data != null) {
                     sessionManager.accessToken = loginResponse.data.access_token
                     
                     val sessionResponse = repository.openSession(mapOf(
-                        "station_code" to stationCode,
-                        "device_name" to deviceName
+                        "station_code" to stationCode.trim(),
+                        "device_name" to deviceName.trim()
                     ))
                     
                     if (sessionResponse.success && sessionResponse.data != null) {

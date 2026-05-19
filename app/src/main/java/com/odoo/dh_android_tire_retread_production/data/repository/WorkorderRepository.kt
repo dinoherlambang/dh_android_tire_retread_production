@@ -16,6 +16,10 @@ class WorkorderRepository(
     private fun <T> handleResponse(response: Response<JsonRpcEnvelope<ApiEnvelope<T>>>): ApiEnvelope<T> {
         if (response.isSuccessful) {
             val body = response.body()
+            if (body?.error != null) {
+                val serverMessage = body.error.data?.message ?: body.error.message
+                throw Exception(serverMessage)
+            }
             val result = body?.result
             if (result != null) {
                 return result
