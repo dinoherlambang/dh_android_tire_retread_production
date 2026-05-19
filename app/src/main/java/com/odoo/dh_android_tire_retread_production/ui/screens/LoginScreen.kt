@@ -1,5 +1,6 @@
 package com.odoo.dh_android_tire_retread_production.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -19,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.odoo.dh_android_tire_retread_production.AppContainer
+import com.odoo.dh_android_tire_retread_production.R
 import com.odoo.dh_android_tire_retread_production.ui.theme.Dh_android_tire_retread_productionTheme
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.LoginUiState
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.LoginViewModel
@@ -75,11 +79,11 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Header
-                Icon(
-                    imageVector = Icons.Default.Factory,
+                Image(
+                    painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    modifier = Modifier.size(120.dp),
+                    contentScale = ContentScale.Fit
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
@@ -90,7 +94,7 @@ fun LoginScreen(
                     )
                 )
                 Text(
-                    text = "Odoo Mobile Station Login",
+                    text = "PT. Paderona Arthajaya",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = Color.Gray,
                         letterSpacing = 1.sp
