@@ -52,7 +52,7 @@ class LoginFragment : Fragment() {
                     }
                     is LoginUiState.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        findNavController().navigate(R.id.action_loginFragment_to_stationSelectFragment)
+                        findNavController().navigate(R.id.action_loginFragment_to_queueFragment)
                     }
                     is LoginUiState.Error -> {
                         binding.loginButton.isEnabled = true
