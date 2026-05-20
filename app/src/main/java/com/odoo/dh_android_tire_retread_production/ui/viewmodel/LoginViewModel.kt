@@ -32,7 +32,7 @@ class LoginViewModel(
                     "password" to password.trim()
                 ))
                 if (loginResponse.success && loginResponse.data != null) {
-                    sessionManager.accessToken = loginResponse.data.access_token
+                    sessionManager.saveAuthToken(loginResponse.data.access_token, loginResponse.data.expires_at)
                     
                     val sessionResponse = repository.openSession(mapOf(
                         "station_code" to stationCode.trim(),
@@ -40,14 +40,13 @@ class LoginViewModel(
                     ))
                     
                     if (sessionResponse.success && sessionResponse.data != null) {
-                        sessionManager.stationSession = sessionResponse.data.station_session
-                        sessionManager.stationCode = stationCode
+                        sessionManager.saveStationSession(sessionResponse.data.station_session, stationCode.trim())
                         _uiState.value = LoginUiState.Success
                     } else {
-                        _uiState.value = LoginUiState.Error(sessionResponse.message)
+                        _uiState.value = LoginUiState.Error(sessionResponse.message ?: "Failed to open session")
                     }
                 } else {
-                    _uiState.value = LoginUiState.Error(loginResponse.message)
+                    _uiState.value = LoginUiState.Error(loginResponse.message ?: "Login failed")
                 }
             } catch (e: Exception) {
                 _uiState.value = LoginUiState.Error(e.message ?: "Unknown error")

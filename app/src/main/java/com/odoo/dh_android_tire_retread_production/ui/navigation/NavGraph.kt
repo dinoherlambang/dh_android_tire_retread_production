@@ -1,11 +1,15 @@
 package com.odoo.dh_android_tire_retread_production.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import kotlinx.coroutines.launch
 import com.odoo.dh_android_tire_retread_production.AppContainer
 import com.odoo.dh_android_tire_retread_production.ui.screens.LoginScreen
 import com.odoo.dh_android_tire_retread_production.ui.screens.WorkorderDetailScreen
@@ -21,7 +25,11 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun NavGraph(navController: NavHostController, container: AppContainer) {
-    val startDestination = if (container.sessionManager.accessToken != null && container.sessionManager.stationSession != null) {
+    val accessToken by container.sessionManager.accessToken.collectAsState(initial = null)
+    val stationSession by container.sessionManager.stationSession.collectAsState(initial = null)
+    val scope = rememberCoroutineScope()
+
+    val startDestination = if (accessToken != null && stationSession != null) {
         Screen.WorkorderList.route
     } else {
         Screen.Login.route
@@ -45,7 +53,9 @@ fun NavGraph(navController: NavHostController, container: AppContainer) {
                     navController.navigate(Screen.WorkorderDetail.createRoute(workorderId))
                 },
                 onLogout = {
-                    container.sessionManager.clear()
+                    scope.launch {
+                        container.sessionManager.clear()
+                    }
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.WorkorderList.route) { inclusive = true }
                     }

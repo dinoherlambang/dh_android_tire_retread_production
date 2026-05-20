@@ -1,42 +1,50 @@
 package com.odoo.dh_android_tire_retread_production.data.api
 
+import com.odoo.dh_android_tire_retread_production.data.model.*
 import retrofit2.Response
 import retrofit2.http.*
 
 interface MobileStationApi {
 
-    @POST("auth/login")
-    suspend fun login(@Body params: Map<String, String>): Response<JsonRpcEnvelope<ApiEnvelope<LoginData>>>
+    @POST("api/v1/mobile/auth/login")
+    suspend fun login(@Body params: Map<String, String>): Response<ApiResponse<LoginResponse>>
 
-    @POST("auth/logout")
-    suspend fun logout(): Response<JsonRpcEnvelope<ApiEnvelope<Unit>>>
+    @POST("api/v1/mobile/auth/logout")
+    suspend fun logout(): Response<ApiResponse<Unit>>
 
-    @POST("station/session/open")
-    suspend fun openSession(@Body params: Map<String, String>): Response<JsonRpcEnvelope<ApiEnvelope<StationSessionData>>>
+    @POST("api/v1/mobile/station/session/open")
+    suspend fun openSession(@Body params: Map<String, String>): Response<ApiResponse<StationSessionResponse>>
 
-    @POST("station/session/heartbeat")
-    suspend fun heartbeat(): Response<JsonRpcEnvelope<ApiEnvelope<Unit>>>
+    @POST("api/v1/mobile/station/session/heartbeat")
+    suspend fun heartbeat(): Response<ApiResponse<Unit>>
 
-    @GET("station/workorders")
+    @GET("api/v1/mobile/station/workorders")
     suspend fun getWorkorders(
-        @Query("page") page: Int? = null,
-        @Query("page_size") pageSize: Int? = null,
         @Query("search") search: String? = null,
-        @Query("state") state: String? = null,
-        @Query("updated_since") updatedSince: String? = null
-    ): Response<JsonRpcEnvelope<ApiEnvelope<List<StationQueueItem>>>>
+        @Query("state") state: String? = null
+    ): Response<ApiResponse<QueueData>>
 
-    @POST("station/workorders/resolve")
-    suspend fun resolveWorkorder(@Body params: Map<String, String>): Response<JsonRpcEnvelope<ApiEnvelope<StationWorkorderDetailData>>>
-
-    @GET("station/workorders/{workorder_id}")
+    @GET("api/v1/mobile/station/workorders/{workorder_id}")
     suspend fun getWorkorderDetail(
         @Path("workorder_id") workorderId: Int
-    ): Response<JsonRpcEnvelope<ApiEnvelope<StationWorkorderDetailData>>>
+    ): Response<ApiResponse<WorkorderDetailData>>
 
-    @POST("station/workorders/{workorder_id}/done")
+    @POST("api/v1/mobile/station/workorders/{workorder_id}/done")
     suspend fun markWorkorderDone(
         @Path("workorder_id") workorderId: Int,
-        @Header("X-Idempotency-Key") idempotencyKey: String
-    ): Response<JsonRpcEnvelope<ApiEnvelope<Unit>>>
+        @Body params: Map<String, String>
+    ): Response<ApiResponse<Unit>>
+
+    @POST("api/v1/mobile/station/workorders/{workorder_id}/cancel")
+    suspend fun cancelWorkorder(
+        @Path("workorder_id") workorderId: Int
+    ): Response<ApiResponse<Unit>>
+
+    @POST("api/v1/mobile/station/workorders/resolve")
+    suspend fun resolveWorkorder(@Body params: Map<String, String>): Response<ApiResponse<QueueItem>>
+
+    @GET("api/v1/mobile/master-data")
+    suspend fun getMasterData(
+        @Query("updated_since") updatedSince: String? = null
+    ): Response<ApiResponse<MasterDataResponse>>
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.odoo.dh_android_tire_retread_production.ui.login.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_stationSelectFragment"
+            app:destination="@id/stationSelectFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stationSelectFragment"
+        android:name="com.odoo.dh_android_tire_retread_production.ui.stationselect.StationSelectFragment"
+        android:label="Select Station"
+        tools:layout="@layout/fragment_station_select">
+        <action
+            android:id="@+id/action_stationSelectFragment_to_queueFragment"
+            app:destination="@id/queueFragment"
+            app:popUpTo="@id/stationSelectFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/queueFragment"
+        android:name="com.odoo.dh_android_tire_retread_production.ui.queue.QueueFragment"
+        android:label="Work Order Queue"
+        tools:layout="@layout/fragment_queue">
+        <action
+            android:id="@+id/action_queueFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.odoo.dh_android_tire_retread_production.ui.detail.DetailFragment"
+        android:label="Work Order Detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="workorderId"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>

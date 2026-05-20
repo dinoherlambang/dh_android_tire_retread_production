@@ -1,36 +1,44 @@
 package com.odoo.dh_android_tire_retread_production.data.local
 
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SessionManager(context: Context) {
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session_prefs")
 
-    private val masterKey = MasterKey.Builder(context)
-        .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-        .build()
+@Singleton
+class SessionManager @Inject constructor(@ApplicationContext private val context: Context) {
 
-    private val prefs = EncryptedSharedPreferences.create(
-        context,
-        "secure_prefs",
-        masterKey,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    private val ACCESS_TOKEN = stringPreferencesKey("access_token")
+    private val STATION_SESSION = stringPreferencesKey("station_session")
+    private val STATION_CODE = stringPreferencesKey("station_code")
+    private val EXPIRES_AT = stringPreferencesKey("expires_at")
 
-    var accessToken: String?
-        get() = prefs.getString("access_token", null)
-        set(value) = prefs.edit().putString("access_token", value).apply()
+    val accessToken: Flow<String?> = context.dataStore.data.map { it[ACCESS_TOKEN] }
+    val stationSession: Flow<String?> = context.dataStore.data.map { it[STATION_SESSION] }
+    val stationCode: Flow<String?> = context.dataStore.data.map { it[STATION_CODE] }
 
-    var stationSession: String?
-        get() = prefs.getString("station_session", null)
-        set(value) = prefs.edit().putString("station_session", value).apply()
+    suspend fun saveAuthToken(token: String, expiresAt: String) {
+        context.dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN] = token
+            preferences[EXPIRES_AT] = expiresAt
+        }
+    }
 
-    var stationCode: String?
-        get() = prefs.getString("station_code", null)
-        set(value) = prefs.edit().putString("station_code", value).apply()
+    suspend fun saveStationSession(session: String, code: String) {
+        context.dataStore.edit { preferences ->
+            preferences[STATION_SESSION] = session
+            preferences[STATION_CODE] = code
+        }
+    }
 
-    fun clear() {
-        prefs.edit().clear().apply()
+    suspend fun clear() {
+        context.dataStore.edit { it.clear() }
     }
 }

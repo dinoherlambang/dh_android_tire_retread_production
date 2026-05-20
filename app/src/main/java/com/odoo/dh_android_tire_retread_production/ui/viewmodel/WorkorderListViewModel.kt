@@ -2,8 +2,7 @@ package com.odoo.dh_android_tire_retread_production.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.odoo.dh_android_tire_retread_production.data.api.StationQueueItem
-import com.odoo.dh_android_tire_retread_production.data.api.StationWorkorderDetailData
+import com.odoo.dh_android_tire_retread_production.data.model.*
 import com.odoo.dh_android_tire_retread_production.data.repository.WorkorderRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -13,9 +12,9 @@ import kotlinx.coroutines.launch
 
 sealed class WorkorderListUiState {
     object Loading : WorkorderListUiState()
-    data class Success(val workorders: List<StationQueueItem>) : WorkorderListUiState()
+    data class Success(val workorders: List<QueueItem>) : WorkorderListUiState()
     data class Error(val message: String) : WorkorderListUiState()
-    data class NavigateToDetail(val data: StationWorkorderDetailData) : WorkorderListUiState()
+    data class NavigateToDetail(val workorderId: Int) : WorkorderListUiState()
 }
 
 class WorkorderListViewModel(private val repository: WorkorderRepository) : ViewModel() {
@@ -40,18 +39,25 @@ class WorkorderListViewModel(private val repository: WorkorderRepository) : View
     }
 
     fun resolveWorkorder(search: String) {
+        if (search.isBlank()) return
+        
         viewModelScope.launch {
             try {
                 val response = repository.resolveWorkorder(search)
                 if (response.success && response.data != null) {
-                    _uiState.value = WorkorderListUiState.NavigateToDetail(response.data)
+                    _uiState.value = WorkorderListUiState.NavigateToDetail(response.data.workorder_id)
                 } else {
-                    // Show error or just keep list
+                    _uiState.value = WorkorderListUiState.Error(response.message ?: "Workorder not found")
                 }
             } catch (e: Exception) {
-                // Handle error
+                _uiState.value = WorkorderListUiState.Error(e.message ?: "Unknown error")
             }
         }
+    }
+
+    fun resetNavigation() {
+        _uiState.value = WorkorderListUiState.Loading
+        loadWorkorders()
     }
 
     private fun startHeartbeat() {

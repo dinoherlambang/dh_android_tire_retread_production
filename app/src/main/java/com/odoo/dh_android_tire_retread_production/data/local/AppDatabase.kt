@@ -2,7 +2,6 @@ package com.odoo.dh_android_tire_retread_production.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.odoo.dh_android_tire_retread_production.data.api.StationQueueItem
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Dao

@@ -1,8 +1,9 @@
 package com.odoo.dh_android_tire_retread_production.data.repository
 
-import com.odoo.dh_android_tire_retread_production.data.api.ApiEnvelope
-import com.odoo.dh_android_tire_retread_production.data.api.JsonRpcEnvelope
 import com.odoo.dh_android_tire_retread_production.data.api.MobileStationApi
+import com.odoo.dh_android_tire_retread_production.data.model.ApiResponse
+import com.odoo.dh_android_tire_retread_production.data.model.LoginResponse
+import com.odoo.dh_android_tire_retread_production.data.model.UserData
 import com.odoo.dh_android_tire_retread_production.data.local.AppDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -30,21 +31,24 @@ class WorkorderRepositoryTest {
     }
 
     @Test
-    fun `handleResponse should return result when successful`() = runBlocking {
-        // This test would normally test a private method, so we test it via a public one like login
-        val expectedData = ApiEnvelope(
+    fun `login should return ApiResponse when successful`() = runBlocking {
+        val loginData = LoginResponse(
+            access_token = "token",
+            token_type = "Bearer",
+            expires_at = "2023-12-31",
+            user = UserData(1, "Test User", "test")
+        )
+        val expectedResponse = ApiResponse(
             success = true,
             message = "Success",
-            data = null,
-            server_time = "2023-01-01",
-            api_version = "1.0"
+            data = loginData
         )
-        val jsonRpcResponse = JsonRpcEnvelope(result = expectedData)
-        val response = Response.success(jsonRpcResponse)
+        val response = Response.success(expectedResponse)
 
-        `when`(mockApi.login(emptyMap())).thenReturn(response)
+        val params = mapOf("login" to "test", "password" to "pass")
+        `when`(mockApi.login(params)).thenReturn(response)
 
-        val result = repository.login(emptyMap())
-        assertEquals(expectedData, result)
+        val result = repository.login(params)
+        assertEquals(expectedResponse, result)
     }
 }

@@ -8,13 +8,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.odoo.dh_android_tire_retread_production.AppContainer
-import com.odoo.dh_android_tire_retread_production.data.api.StationQueueItem
+import com.odoo.dh_android_tire_retread_production.data.model.QueueItem
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.WorkorderListUiState
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.WorkorderListViewModel
 
@@ -32,18 +33,21 @@ fun WorkorderListScreen(
     })
 
     val uiState by viewModel.uiState.collectAsState()
+    val stationCode by container.sessionManager.stationCode.collectAsState(initial = "")
     var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState) {
         if (uiState is WorkorderListUiState.NavigateToDetail) {
-            onNavigateToDetail((uiState as WorkorderListUiState.NavigateToDetail).data.workorder.id)
+            val workorderId = (uiState as WorkorderListUiState.NavigateToDetail).workorderId
+            onNavigateToDetail(workorderId)
+            viewModel.resetNavigation()
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Station: ${container.sessionManager.stationCode ?: ""}") },
+                title = { Text("Station: $stationCode") },
                 actions = {
                     IconButton(onClick = { viewModel.loadWorkorders() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
@@ -91,7 +95,12 @@ fun WorkorderListScreen(
                 }
                 is WorkorderListUiState.Error -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(state.message, color = MaterialTheme.colorScheme.error)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(state.message, color = MaterialTheme.colorScheme.error)
+                            Button(onClick = { viewModel.loadWorkorders() }) {
+                                Text("Retry")
+                            }
+                        }
                     }
                 }
                 else -> {}
@@ -101,7 +110,7 @@ fun WorkorderListScreen(
 }
 
 @Composable
-fun WorkorderItem(item: StationQueueItem, onClick: () -> Unit) {
+fun WorkorderItem(item: QueueItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

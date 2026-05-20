@@ -1,33 +1,18 @@
 package com.odoo.dh_android_tire_retread_production
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import com.odoo.dh_android_tire_retread_production.ui.navigation.NavGraph
-import com.odoo.dh_android_tire_retread_production.ui.theme.Dh_android_tire_retread_productionTheme
+import androidx.appcompat.app.AppCompatActivity
+import com.odoo.dh_android_tire_retread_production.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val container = (application as MainApplication).container
-        
-        enableEdgeToEdge()
-        setContent {
-            Dh_android_tire_retread_productionTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    NavGraph(navController = navController, container = container)
-                }
-            }
-        }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 }

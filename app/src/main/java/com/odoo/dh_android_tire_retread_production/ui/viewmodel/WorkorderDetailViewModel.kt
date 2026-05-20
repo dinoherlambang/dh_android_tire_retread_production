@@ -2,7 +2,7 @@ package com.odoo.dh_android_tire_retread_production.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.odoo.dh_android_tire_retread_production.data.api.StationWorkorderDetailData
+import com.odoo.dh_android_tire_retread_production.data.model.*
 import com.odoo.dh_android_tire_retread_production.data.repository.WorkorderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 sealed class WorkorderDetailUiState {
     object Loading : WorkorderDetailUiState()
-    data class Success(val data: StationWorkorderDetailData) : WorkorderDetailUiState()
+    data class Success(val data: WorkorderDetailData) : WorkorderDetailUiState()
     data class Error(val message: String) : WorkorderDetailUiState()
     object Done : WorkorderDetailUiState()
 }
@@ -28,7 +28,7 @@ class WorkorderDetailViewModel(private val repository: WorkorderRepository) : Vi
                 if (response.success && response.data != null) {
                     _uiState.value = WorkorderDetailUiState.Success(response.data)
                 } else {
-                    _uiState.value = WorkorderDetailUiState.Error(response.message)
+                    _uiState.value = WorkorderDetailUiState.Error(response.message ?: "Failed to load details")
                 }
             } catch (e: Exception) {
                 _uiState.value = WorkorderDetailUiState.Error(e.message ?: "Unknown error")
@@ -43,7 +43,7 @@ class WorkorderDetailViewModel(private val repository: WorkorderRepository) : Vi
                 if (response.success) {
                     _uiState.value = WorkorderDetailUiState.Done
                 } else {
-                    _uiState.value = WorkorderDetailUiState.Error(response.message)
+                    _uiState.value = WorkorderDetailUiState.Error(response.message ?: "Failed to mark as done")
                 }
             } catch (e: Exception) {
                 _uiState.value = WorkorderDetailUiState.Error(e.message ?: "Unknown error")

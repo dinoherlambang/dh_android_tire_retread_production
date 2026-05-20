@@ -1,6 +1,8 @@
 package com.odoo.dh_android_tire_retread_production.data.api
 
 import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -9,12 +11,14 @@ class AuthInterceptor(private val sessionManager: SessionManager) : Interceptor 
         val originalRequest = chain.request()
         val requestBuilder = originalRequest.newBuilder()
 
-        sessionManager.accessToken?.let {
-            requestBuilder.addHeader("Authorization", "Bearer $it")
-        }
+        runBlocking {
+            sessionManager.accessToken.firstOrNull()?.let {
+                requestBuilder.addHeader("Authorization", "Bearer $it")
+            }
 
-        sessionManager.stationSession?.let {
-            requestBuilder.addHeader("X-Station-Session", it)
+            sessionManager.stationSession.firstOrNull()?.let {
+                requestBuilder.addHeader("X-Station-Session", it)
+            }
         }
 
         return chain.proceed(requestBuilder.build())

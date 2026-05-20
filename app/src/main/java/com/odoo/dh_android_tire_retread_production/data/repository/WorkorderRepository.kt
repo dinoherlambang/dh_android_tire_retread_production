@@ -1,6 +1,7 @@
 package com.odoo.dh_android_tire_retread_production.data.repository
 
 import com.odoo.dh_android_tire_retread_production.data.api.*
+import com.odoo.dh_android_tire_retread_production.data.model.*
 import com.odoo.dh_android_tire_retread_production.data.local.AppDatabase
 import com.odoo.dh_android_tire_retread_production.data.local.StationQueueEntity
 import kotlinx.coroutines.flow.Flow
@@ -13,34 +14,32 @@ class WorkorderRepository(
     private val database: AppDatabase
 ) {
 
-    private fun <T> handleResponse(response: Response<JsonRpcEnvelope<ApiEnvelope<T>>>): ApiEnvelope<T> {
+    private fun <T> handleResponse(response: Response<ApiResponse<T>>): ApiResponse<T> {
         if (response.isSuccessful) {
             val body = response.body()
-            if (body?.error != null) {
-                val serverMessage = body.error.data?.message ?: body.error.message
-                throw Exception(serverMessage)
+            if (body != null) {
+                if (!body.success) {
+                    throw Exception(body.message ?: "Unknown error")
+                }
+                return body
             }
-            val result = body?.result
-            if (result != null) {
-                return result
-            }
-            throw Exception("Empty result in JSON-RPC response")
+            throw Exception("Empty response body")
         } else {
             throw Exception("HTTP Error: ${response.code()} ${response.message()}")
         }
     }
 
-    suspend fun login(params: Map<String, String>): ApiEnvelope<LoginData> {
+    suspend fun login(params: Map<String, String>): ApiResponse<LoginResponse> {
         return handleResponse(api.login(params))
     }
 
-    suspend fun openSession(params: Map<String, String>): ApiEnvelope<StationSessionData> {
+    suspend fun openSession(params: Map<String, String>): ApiResponse<StationSessionResponse> {
         return handleResponse(api.openSession(params))
     }
 
     fun getWorkorders(
         search: String? = null
-    ): Flow<List<StationQueueItem>> = flow {
+    ): Flow<List<QueueItem>> = flow {
         // Emit cached data first
         val cached = database.stationQueueDao().getAll().map { it.toDto() }
         emit(cached)
@@ -48,7 +47,7 @@ class WorkorderRepository(
         try {
             val response = handleResponse(api.getWorkorders(search = search))
             if (response.success && (response.data != null)) {
-                val items = response.data
+                val items = response.data.items
                 database.stationQueueDao().deleteAll()
                 database.stationQueueDao().insertAll(items.map { it.toEntity() })
                 emit(items)
@@ -59,24 +58,24 @@ class WorkorderRepository(
         }
     }
 
-    suspend fun getWorkorderDetail(workorderId: Int): ApiEnvelope<StationWorkorderDetailData> {
+    suspend fun getWorkorderDetail(workorderId: Int): ApiResponse<WorkorderDetailData> {
         return handleResponse(api.getWorkorderDetail(workorderId))
     }
 
-    suspend fun resolveWorkorder(search: String): ApiEnvelope<StationWorkorderDetailData> {
+    suspend fun resolveWorkorder(search: String): ApiResponse<QueueItem> {
         return handleResponse(api.resolveWorkorder(mapOf("search" to search)))
     }
 
-    suspend fun markWorkorderDone(workorderId: Int): ApiEnvelope<Unit> {
+    suspend fun markWorkorderDone(workorderId: Int): ApiResponse<Unit> {
         val idempotencyKey = "station-done-${System.currentTimeMillis()}-${UUID.randomUUID()}"
-        return handleResponse(api.markWorkorderDone(workorderId, idempotencyKey))
+        return handleResponse(api.markWorkorderDone(workorderId, mapOf("idempotency_key" to idempotencyKey)))
     }
 
-    suspend fun heartbeat(): ApiEnvelope<Unit> {
+    suspend fun heartbeat(): ApiResponse<Unit> {
         return handleResponse(api.heartbeat())
     }
 
-    private fun StationQueueItem.toEntity() = StationQueueEntity(
+    private fun QueueItem.toEntity() = StationQueueEntity(
         workorder_id = workorder_id,
         wo_number = wo_number,
         paper_wo = paper_wo,
@@ -88,7 +87,7 @@ class WorkorderRepository(
         last_update = last_update
     )
 
-    private fun StationQueueEntity.toDto() = StationQueueItem(
+    private fun StationQueueEntity.toDto() = QueueItem(
         workorder_id = workorder_id,
         wo_number = wo_number,
         paper_wo = paper_wo,

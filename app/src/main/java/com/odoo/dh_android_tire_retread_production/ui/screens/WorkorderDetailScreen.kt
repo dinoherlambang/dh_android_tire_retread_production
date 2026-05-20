@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.odoo.dh_android_tire_retread_production.AppContainer
-import com.odoo.dh_android_tire_retread_production.data.api.MaterialLine
+import com.odoo.dh_android_tire_retread_production.data.model.MaterialLine
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.WorkorderDetailUiState
 import com.odoo.dh_android_tire_retread_production.ui.viewmodel.WorkorderDetailViewModel
 
@@ -66,7 +66,7 @@ fun WorkorderDetailScreen(
                         .padding(innerPadding)
                         .padding(16.dp)
                 ) {
-                    Text("Workorder: ${state.data.workorder.name}", style = MaterialTheme.typography.headlineSmall)
+                    Text("Workorder: ${state.data.workorder.wo_number}", style = MaterialTheme.typography.headlineSmall)
                     Text("Station: ${state.data.station.name}", style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(16.dp))
                     
@@ -80,15 +80,22 @@ fun WorkorderDetailScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = { viewModel.markAsDone(workorderId) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = state.data.workorder.can_done
                     ) {
-                        Text("Done")
+                        Text("Mark as Done")
                     }
                 }
             }
             is WorkorderDetailUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(state.message, color = MaterialTheme.colorScheme.error)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(state.message, color = MaterialTheme.colorScheme.error)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = { viewModel.loadDetail(workorderId) }) {
+                            Text("Retry")
+                        }
+                    }
                 }
             }
             else -> {}
