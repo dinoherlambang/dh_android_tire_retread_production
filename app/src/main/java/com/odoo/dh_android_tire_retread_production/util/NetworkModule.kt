@@ -1,7 +1,9 @@
 package com.odoo.dh_android_tire_retread_production.util
 
+import com.odoo.dh_android_tire_retread_production.BuildConfig
 import com.odoo.dh_android_tire_retread_production.data.api.AuthInterceptor
 import com.odoo.dh_android_tire_retread_production.data.api.IdempotencyInterceptor
+import com.odoo.dh_android_tire_retread_production.data.api.JsonRpcInterceptor
 import com.odoo.dh_android_tire_retread_production.data.api.MobileStationApi
 import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
 import dagger.Module
@@ -25,6 +27,7 @@ object NetworkModule {
         idempotencyInterceptor: IdempotencyInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(JsonRpcInterceptor())
             .addInterceptor(AuthInterceptor(sessionManager))
             .addInterceptor(idempotencyInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -41,7 +44,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8069/") // Default Odoo dev address for emulator
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
