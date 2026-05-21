@@ -2,6 +2,7 @@ package com.odoo.dh_android_tire_retread_production
 
 import android.content.Context
 import androidx.room.Room
+import com.odoo.dh_android_tire_retread_production.BuildConfig
 import com.odoo.dh_android_tire_retread_production.data.api.MobileStationApi
 import com.odoo.dh_android_tire_retread_production.data.local.AppDatabase
 import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
@@ -22,13 +23,13 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
 
     private val database: AppDatabase by lazy {
         Room.databaseBuilder(context, AppDatabase::class.java, "dh_production_db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 
     private val api: MobileStationApi by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8069/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         retrofit.create(MobileStationApi::class.java)

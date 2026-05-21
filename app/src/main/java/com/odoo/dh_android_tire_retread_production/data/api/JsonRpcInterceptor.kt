@@ -17,8 +17,7 @@ class JsonRpcInterceptor : Interceptor {
             val params = if (request.body != null) {
                 val buf = okio.Buffer()
                 request.body!!.writeTo(buf)
-                val bodyStr = buf.readUtf8()
-                if (bodyStr.isBlank()) "{}" else bodyStr
+                buf.readUtf8().ifBlank { "{}" }
             } else "{}"
             val rpc = """{"jsonrpc":"2.0","method":"call","params":$params}"""
             val newBody = rpc.toRequestBody("application/json; charset=utf-8".toMediaType())
@@ -47,7 +46,7 @@ class JsonRpcInterceptor : Interceptor {
                 }
                 else -> raw  // GET endpoints return flat JSON — pass through
             }
-        } catch (e: Exception) { raw }
+        } catch (_: Exception) { raw }
 
         return response.newBuilder()
             .body(payload.toResponseBody("application/json".toMediaTypeOrNull()))

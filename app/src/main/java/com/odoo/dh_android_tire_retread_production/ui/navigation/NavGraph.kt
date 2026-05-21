@@ -29,7 +29,7 @@ fun NavGraph(navController: NavHostController, container: AppContainer) {
     val stationSession by container.sessionManager.stationSession.collectAsState(initial = null)
     val scope = rememberCoroutineScope()
 
-    val startDestination = if (accessToken != null && stationSession != null) {
+    val startDestination = if ((accessToken != null) && (stationSession != null)) {
         Screen.WorkorderList.route
     } else {
         Screen.Login.route
