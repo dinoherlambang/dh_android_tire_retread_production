@@ -15,9 +15,14 @@ import com.odoo.dh_android_tire_retread_production.databinding.FragmentQueueBind
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
 
 @AndroidEntryPoint
 class QueueFragment : Fragment() {
+
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     private var _binding: FragmentQueueBinding? = null
     private val binding get() = _binding!!
@@ -36,6 +41,24 @@ class QueueFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.toolbar.inflateMenu(R.menu.queue_menu)
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_logout -> {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        sessionManager.clear()
+                        findNavController().navigate(R.id.action_queueFragment_to_loginFragment)
+                    }
+                    true
+                }
+                R.id.action_exit -> {
+                    requireActivity().finish()
+                    true
+                }
+                else -> false
+            }
+        }
 
         adapter = QueueAdapter { item ->
             val bundle = Bundle().apply {

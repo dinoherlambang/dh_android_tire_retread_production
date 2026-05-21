@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Tire Retread</string>
+    <string name="action_exit">Exit</string>
 </resources>

@@ -43,6 +43,10 @@ class LoginFragment : Fragment() {
             viewModel.login(username, password, deviceName, stationCode)
         }
 
+        binding.exitButton.setOnClickListener {
+            requireActivity().finish()
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.uiState.collectLatest { state ->
                 when (state) {
