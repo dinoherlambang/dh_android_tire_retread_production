@@ -13,10 +13,13 @@ class JsonRpcInterceptor : Interceptor {
         val request = chain.request()
 
         // --- Wrap POST request body in JSON-RPC envelope ---
-        val outRequest = if (request.method == "POST" && request.body != null) {
-            val buf = okio.Buffer()
-            request.body!!.writeTo(buf)
-            val params = buf.readUtf8()
+        val outRequest = if (request.method == "POST") {
+            val params = if (request.body != null) {
+                val buf = okio.Buffer()
+                request.body!!.writeTo(buf)
+                val bodyStr = buf.readUtf8()
+                if (bodyStr.isBlank()) "{}" else bodyStr
+            } else "{}"
             val rpc = """{"jsonrpc":"2.0","method":"call","params":$params}"""
             val newBody = rpc.toRequestBody("application/json; charset=utf-8".toMediaType())
             request.newBuilder().method("POST", newBody).build()
