@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.Dh_android_tire_retread_production" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Dh_android_tire_retread_production" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
@@ -15,10 +15,22 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <!-- Splash Screen Theme -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">#F5F7F9</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="startIconTint">#90A4AE</item>
+    </style>
+
+    <!-- Splash Screen Theme (Android 12+) -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@drawable/splash_gradient</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
+        <item name="windowSplashScreenBackground">#1A237E</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="windowSplashScreenIconBackgroundColor">#1A237E</item>
         <item name="postSplashScreenTheme">@style/Theme.Dh_android_tire_retread_production</item>
     </style>
 </resources>

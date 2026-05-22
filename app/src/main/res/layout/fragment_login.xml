@@ -3,19 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_gradient">
+    android:background="#F0F4F8">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"
-        app:cardCornerRadius="24dp"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="32dp"
         app:cardElevation="12dp"
+        app:cardBackgroundColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6">
+        app:layout_constraintWidth_percent="0.85">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,8 +27,8 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:contentDescription="@null"
                 android:src="@drawable/app_logo" />
 
@@ -35,26 +36,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Tire Retread Production"
-                android:textColor="@color/primary"
-                android:textSize="24sp"
+                android:text="@string/title_login"
+                android:textColor="#1A237E"
+                android:textSize="28sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PT. Paderona Arthajaya"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="16sp" />
+                android:text="@string/subtitle_login"
+                android:textColor="#78909C"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="32dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:hint="Username"
-                app:startIconDrawable="@drawable/ic_person">
+                android:hint="@string/label_username"
+                app:boxBackgroundColor="#F5F7F9"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:startIconDrawable="@drawable/ic_person"
+                app:startIconTint="#90A4AE">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/usernameEdit"
@@ -65,13 +77,21 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/passwordLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Password"
+                android:hint="@string/label_password"
+                app:boxBackgroundColor="#F5F7F9"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
                 app:passwordToggleEnabled="true"
-                app:startIconDrawable="@drawable/ic_lock">
+                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconTint="#90A4AE">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passwordEdit"
@@ -85,37 +105,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/deviceNameLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Device Name"
-                    app:startIconDrawable="@drawable/ic_tablet">
+                    android:layout_marginEnd="8dp"
+                    android:hint="@string/label_device_name"
+                    app:boxBackgroundColor="#F5F7F9"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:startIconDrawable="@drawable/ic_tablet"
+                    app:startIconTint="#90A4AE">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/deviceNameEdit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Tablet-01"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@string/default_device_name" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <View
-                    android:layout_width="16dp"
-                    android:layout_height="0dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/stationCodeLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Station Code"
-                    app:startIconDrawable="@drawable/ic_qrcode">
+                    android:layout_marginStart="8dp"
+                    android:hint="@string/label_station_code"
+                    app:boxBackgroundColor="#F5F7F9"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:startIconDrawable="@drawable/ic_qrcode"
+                    app:startIconTint="#90A4AE">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/stationCodeEdit"
@@ -128,19 +163,24 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loginButton"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="64dp"
                 android:layout_marginTop="32dp"
-                android:text="SIGN IN"
-                app:cornerRadius="12dp" />
+                android:text="@string/action_authenticate"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                app:elevation="4dp"
+                android:backgroundTint="#1A237E" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/exitButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="EXIT APP"
-                android:textColor="@color/error" />
+                android:layout_marginTop="16dp"
+                android:text="@string/action_close_app"
+                android:textColor="#CFD8DC" />
 
             <ProgressBar
                 android:id="@+id/progressBar"

@@ -1,63 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="12dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="24dp">
 
         <TextView
             android:id="@+id/woNumber"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="WO/2026/0042"
-            android:textSize="18sp"
+            android:textColor="#1A237E"
+            android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/statusChip"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="WO/2026/0042" />
 
         <TextView
             android:id="@+id/serialNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SN-10001"
-            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="4dp"
+            android:letterSpacing="0.05"
+            android:textAllCaps="true"
+            android:textColor="#90A4AE"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/woNumber" />
+            app:layout_constraintTop_toBottomOf="@id/woNumber"
+            tools:text="SN-10001" />
 
-        <TextView
-            android:id="@+id/customerName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/customerInfo"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="PT Sumber Jaya"
+            android:layout_marginTop="20dp"
+            android:background="#F8FAFC"
+            android:padding="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/serialNumber" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/serialNumber">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_person"
+                app:tint="#607D8B"
+                android:contentDescription="@null" />
+
+            <TextView
+                android:id="@+id/customerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="#455A64"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="PT Sumber Jaya" />
+        </LinearLayout>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/statusChip"
-            style="@style/Widget.MaterialComponents.Chip.Action"
+            style="@style/Widget.Material3.Chip.Assist.Elevated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Draft"
+            app:chipCornerRadius="14dp"
+            app:chipBackgroundColor="#E8EAF6"
+            android:textColor="#1A237E"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="DRAFT" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/serviceTypeChip"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+            style="@style/Widget.Material3.Chip.Suggestion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Retread"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_marginTop="12dp"
+            app:chipCornerRadius="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/customerInfo"
+            tools:text="Retread" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

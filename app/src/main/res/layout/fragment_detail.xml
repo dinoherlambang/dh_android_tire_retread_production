@@ -1,136 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F4F8">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
-            app:title="Work Order Detail" />
+            app:title="Order Details"
+            app:titleCentered="true"
+            app:titleTextColor="#1A237E"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomActions"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="24dp"
+            android:paddingBottom="120dp">
 
+            <!-- Header Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="32dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="32dp">
 
                     <TextView
                         android:id="@+id/woNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="WO/2026/0042"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="#1A237E"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        tools:text="WO/2026/0042" />
 
                     <TextView
                         android:id="@+id/serialNumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SN-10001"
-                        android:textColor="@android:color/darker_gray" />
+                        android:layout_marginTop="4dp"
+                        android:letterSpacing="0.05"
+                        android:textAllCaps="true"
+                        android:textColor="#90A4AE"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="SN-10001" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginVertical="8dp"
-                        android:background="#DDDDDD" />
+                        android:layout_marginVertical="24dp"
+                        android:background="#F5F7F9" />
 
-                    <TextView
-                        android:id="@+id/customerName"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PT Sumber Jaya" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/serviceTypeChip"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Retread" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#90A4AE"
+                            android:contentDescription="@null" />
+
+                        <TextView
+                            android:id="@+id/customerName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:textColor="#455A64"
+                            android:textSize="17sp"
+                            tools:text="PT Sumber Jaya" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/serviceTypeChip"
+                            style="@style/Widget.MaterialComponents.Chip.Action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:chipBackgroundColor="#E8EAF6"
+                            app:chipCornerRadius="16dp"
+                            android:textColor="#1A237E"
+                            tools:text="Retread" />
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Materials"
-                android:textSize="18sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:letterSpacing="0.1"
+                android:text="MATERIALS"
+                android:textColor="#90A4AE"
+                android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/materialsRecyclerView"
+            <!-- Materials Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/materialsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:padding="12dp" />
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <LinearLayout
-        android:id="@+id/bottomActions"
+    <!-- Bottom Actions Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomActionsCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="8dp"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_gravity="bottom"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="16dp"
+        app:cardBackgroundColor="@color/white">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/failButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="FAIL"
-            android:textColor="@color/error"
-            app:rippleColor="#20B00020" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancelButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="CANCEL"
-            android:textColor="@android:color/darker_gray" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/failButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:text="FAIL"
+                android:textColor="@color/error"
+                android:textStyle="bold"
+                app:rippleColor="#15FF0000" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/passButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1.5"
-            android:backgroundTint="#4CAF50"
-            android:text="PASS" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancelButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:text="CANCEL"
+                android:textColor="#90A4AE"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/passButton"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1.5"
+                android:text="PASS"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                android:backgroundTint="#1A237E" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
