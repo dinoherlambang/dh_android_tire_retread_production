@@ -19,7 +19,7 @@ android {
         properties.load(propertiesFile.inputStream())
     }
 
-    val baseUrl = properties.getProperty("BASE_URL") ?: "http://10.0.2.2:8069/"
+    val localUrl = properties.getProperty("BASE_URL") ?: "http://10.0.2.2:8069/"
 
     defaultConfig {
         applicationId = "com.odoo.dh_android_tire_retread_production"
@@ -29,13 +29,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"$localUrl\"")
+        }
         release {
             isMinifyEnabled = false
+            // Use debug signing for now so you can run the release build on your phone/emulator for testing
+            signingConfig = signingConfigs.getByName("debug")
+
+            // Replace with your actual production HTTPS domain
+            buildConfigField("String", "BASE_URL", "\"https://erp.paderona.com\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
