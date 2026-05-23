@@ -6,7 +6,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthRepository @Inject constructor(
+class
+AuthRepository @Inject constructor(
     private val api: MobileStationApi
 ) {
     suspend fun login(params: Map<String, String>): ApiResponse<LoginResponse> {

@@ -37,7 +37,12 @@ class SessionHeartbeatHandler @Inject constructor(
             while (isActive) {
                 val session = sessionManager.stationSession.firstOrNull()
                 if (session != null) {
-                    stationRepository.heartbeat()
+                    try {
+                        stationRepository.heartbeat()
+                    } catch (e: Exception) {
+                        // Log the error or ignore if network is down
+                        e.printStackTrace()
+                    }
                 }
                 delay(5 * 60 * 1000) // 5 minutes
             }
