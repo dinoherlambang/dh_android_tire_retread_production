@@ -30,6 +30,10 @@ class QueueViewModel @Inject constructor(
         startAutoRefresh()
     }
 
+    fun refresh() {
+        startAutoRefresh()
+    }
+
     fun startAutoRefresh() {
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch {

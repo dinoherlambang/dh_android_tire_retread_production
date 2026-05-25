@@ -70,11 +70,12 @@ class QueueFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
 
+        // Trigger immediate fetch when entering or returning to the screen
+        viewModel.refresh()
+
         binding.swipeRefresh.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.fetchQueue()
-                binding.swipeRefresh.isRefreshing = false
-            }
+            viewModel.refresh()
+            binding.swipeRefresh.isRefreshing = false
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
