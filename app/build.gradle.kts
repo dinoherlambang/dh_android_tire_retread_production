@@ -26,7 +26,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,10 +37,7 @@ android {
         }
         release {
             isMinifyEnabled = false
-            // Use debug signing for now so you can run the release build on your phone/emulator for testing
             signingConfig = signingConfigs.getByName("debug")
-
-            // Replace with your actual production HTTPS domain
             buildConfigField("String", "BASE_URL", "\"https://erp.paderona.com\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -56,6 +53,26 @@ android {
         viewBinding = true
         compose = true
         buildConfig = true
+    }
+}
+
+// Renaming the APK for the Release build type using a dedicated task
+// This is the most stable way to rename files in the latest Gradle versions
+tasks.whenTaskAdded {
+    if (name.startsWith("assembleRelease")) {
+        val buildTask = this
+        buildTask.doLast {
+            val apkDir = file("${project.buildDir}/outputs/apk/release")
+            if (apkDir.exists()) {
+                val oldFile = file("${apkDir}/app-release.apk")
+                if (oldFile.exists()) {
+                    val newName = "TireRetread_v${android.defaultConfig.versionName}_release.apk"
+                    val newFile = file("${apkDir}/${newName}")
+                    oldFile.renameTo(newFile)
+                    println("APK Renamed to: ${newFile.name}")
+                }
+            }
+        }
     }
 }
 
