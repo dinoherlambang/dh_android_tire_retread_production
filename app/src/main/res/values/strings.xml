@@ -6,9 +6,9 @@
     <string name="label_device_name">Device Name</string>
     <string name="label_station_code">Station Code</string>
     <string name="default_device_name">Tablet-01</string>
-    <string name="action_authenticate">Authenticate</string>
-    <string name="action_close_app">Close Application</string>
+    <string name="action_authenticate">Otentikasi</string>
+    <string name="action_close_app">Tutup Aplikasi</string>
     <string name="title_login">Sign In</string>
-    <string name="subtitle_login">Production Management System</string>
+    <string name="subtitle_login">Tire Retread Production System</string>
     <string name="subtitle_station_select">Choose the current production stage</string>
 </resources>
