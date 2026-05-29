@@ -15,14 +15,9 @@ import com.odoo.dh_android_tire_retread_production.databinding.FragmentQueueBind
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
 
 @AndroidEntryPoint
 class QueueFragment : Fragment() {
-
-    @Inject
-    lateinit var sessionManager: SessionManager
 
     private var _binding: FragmentQueueBinding? = null
     private val binding get() = _binding!!
@@ -45,11 +40,12 @@ class QueueFragment : Fragment() {
         binding.toolbar.inflateMenu(R.menu.queue_menu)
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.action_change_station -> {
+                    viewModel.changeStation()
+                    true
+                }
                 R.id.action_logout -> {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        sessionManager.clear()
-                        findNavController().navigate(R.id.action_queueFragment_to_loginFragment)
-                    }
+                    viewModel.logout()
                     true
                 }
                 R.id.action_exit -> {
@@ -82,17 +78,23 @@ class QueueFragment : Fragment() {
             viewModel.uiState.collectLatest { state ->
                 when (state) {
                     is QueueUiState.Loading -> {
-                        if (adapter.itemCount == 0) {
-                            // Show initial loading state if needed
-                        }
+                        // binding.progressBar.visibility = View.VISIBLE
                     }
                     is QueueUiState.Success -> {
+                        // binding.progressBar.visibility = View.GONE
                         binding.toolbar.subtitle = "${state.data.station.name} - ${state.data.total} items"
                         adapter.submitList(state.data.items)
                         binding.emptyView.visibility = if (state.data.total == 0) View.VISIBLE else View.GONE
                     }
                     is QueueUiState.Error -> {
+                        // binding.progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+                    }
+                    is QueueUiState.LoggedOut -> {
+                        findNavController().navigate(R.id.action_queueFragment_to_loginFragment)
+                    }
+                    is QueueUiState.StationClosed -> {
+                        findNavController().navigate(R.id.action_queueFragment_to_stationSelectFragment)
                     }
                 }
             }

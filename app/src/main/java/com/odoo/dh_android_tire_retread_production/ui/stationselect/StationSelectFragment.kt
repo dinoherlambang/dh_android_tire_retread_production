@@ -37,8 +37,7 @@ class StationSelectFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = StationAdapter { station ->
-            // In a real app, you'd get the device name from settings or build info
-            viewModel.selectStation(station, "Tablet-01")
+            viewModel.selectStation(station)
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())

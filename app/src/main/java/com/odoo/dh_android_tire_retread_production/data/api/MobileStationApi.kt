@@ -12,8 +12,14 @@ interface MobileStationApi {
     @POST("api/v1/mobile/auth/logout")
     suspend fun logout(): Response<ApiResponse<Unit>>
 
+    @GET("api/v1/mobile/stations")
+    suspend fun getStations(): Response<ApiResponse<MasterDataResponse>>
+
     @POST("api/v1/mobile/station/session/open")
     suspend fun openSession(@Body params: Map<String, String>): Response<ApiResponse<StationSessionResponse>>
+
+    @POST("api/v1/mobile/station/session/close")
+    suspend fun closeSession(@Body params: Map<String, String>): Response<ApiResponse<Unit>>
 
     @POST("api/v1/mobile/station/session/heartbeat")
     suspend fun heartbeat(): Response<ApiResponse<Unit>>

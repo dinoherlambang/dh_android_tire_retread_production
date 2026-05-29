@@ -26,37 +26,20 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun login(username: String, password: String, deviceName: String, stationCode: String) {
+    fun login(username: String, password: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
             try {
                 val params = mapOf(
                     "login" to username.trim(),
                     "password" to password.trim(),
-                    "device_name" to deviceName.trim(),
-                    "device_id" to "android_id_placeholder" // TODO: Get actual ID
+                    "device_name" to android.os.Build.MODEL,
+                    "device_id" to "android_id_placeholder" // TODO: Get actual ID if possible
                 )
                 val response = authRepository.login(params)
                 if (response.success && response.data != null) {
                     sessionManager.saveAuthToken(response.data.access_token, response.data.expires_at)
-                    
-                    // Automatically open session if station code is provided
-                    if (stationCode.isNotBlank()) {
-                        val sessionParams = mapOf(
-                            "station_code" to stationCode.trim(),
-                            "device_name" to deviceName.trim(),
-                            "device_id" to "android_id_placeholder"
-                        )
-                        val sessionResponse = authRepository.openSession(sessionParams)
-                        if (sessionResponse.success && sessionResponse.data != null) {
-                            sessionManager.saveStationSession(sessionResponse.data.station_session, stationCode.trim())
-                            _uiState.value = LoginUiState.Success
-                        } else {
-                            _uiState.value = LoginUiState.Error(sessionResponse.message ?: "Failed to open station session")
-                        }
-                    } else {
-                        _uiState.value = LoginUiState.Success
-                    }
+                    _uiState.value = LoginUiState.Success
                 } else {
                     _uiState.value = LoginUiState.Error(response.message ?: "Login failed")
                 }

@@ -19,15 +19,6 @@ AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun openSession(params: Map<String, String>): ApiResponse<StationSessionResponse> {
-        val response = api.openSession(params)
-        return if (response.isSuccessful) {
-            response.body() ?: ApiResponse(success = false, message = "Empty response")
-        } else {
-            ApiResponse(success = false, message = response.message())
-        }
-    }
-
     suspend fun logout(): ApiResponse<Unit> {
         val response = api.logout()
         return if (response.isSuccessful) {

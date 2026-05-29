@@ -8,6 +8,8 @@
     <string name="default_device_name">Tablet-01</string>
     <string name="action_authenticate">Otentikasi</string>
     <string name="action_close_app">Tutup Aplikasi</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_change_station">Change Station</string>
     <string name="title_login">Sign In</string>
     <string name="subtitle_login">Tire Retread Production System</string>
     <string name="subtitle_station_select">Choose the current production stage</string>

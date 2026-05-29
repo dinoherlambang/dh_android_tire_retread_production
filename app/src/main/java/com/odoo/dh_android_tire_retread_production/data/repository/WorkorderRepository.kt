@@ -63,7 +63,7 @@ class WorkorderRepository(
     }
 
     suspend fun resolveWorkorder(search: String): ApiResponse<QueueItem> {
-        return handleResponse(api.resolveWorkorder(mapOf("search" to search)))
+        return handleResponse(api.resolveWorkorder(mapOf("query_text" to search)))
     }
 
     suspend fun markWorkorderDone(workorderId: Int): ApiResponse<Unit> {

@@ -38,6 +38,13 @@ class SessionManager @Inject constructor(@ApplicationContext private val context
         }
     }
 
+    suspend fun clearStationSession() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(STATION_SESSION)
+            preferences.remove(STATION_CODE)
+        }
+    }
+
     suspend fun clear() {
         context.dataStore.edit { it.clear() }
     }

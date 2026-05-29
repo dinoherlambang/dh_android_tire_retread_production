@@ -27,6 +27,15 @@ class QueueRepository @Inject constructor(
         }
     }
 
+    suspend fun resolveWorkorder(query: String): ApiResponse<QueueItem> {
+        val response = api.resolveWorkorder(mapOf("query_text" to query))
+        return if (response.isSuccessful) {
+            response.body() ?: ApiResponse(success = false, message = "Empty response")
+        } else {
+            ApiResponse(success = false, message = response.message())
+        }
+    }
+
     suspend fun markDone(workorderId: Int, result: String, notes: String? = null): ApiResponse<Unit> {
         val params = mutableMapOf("result" to result)
         notes?.let { params["notes"] = it }
