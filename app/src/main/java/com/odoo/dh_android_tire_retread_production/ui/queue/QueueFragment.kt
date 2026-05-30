@@ -49,7 +49,7 @@ class QueueFragment : Fragment() {
                     true
                 }
                 R.id.action_exit -> {
-                    requireActivity().finish()
+                    requireActivity().finishAndRemoveTask()
                     true
                 }
                 else -> false

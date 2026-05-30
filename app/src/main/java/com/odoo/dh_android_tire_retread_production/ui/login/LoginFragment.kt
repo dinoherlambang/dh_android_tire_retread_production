@@ -10,19 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.odoo.dh_android_tire_retread_production.R
-import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
 import com.odoo.dh_android_tire_retread_production.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
-
-    @Inject
-    lateinit var sessionManager: SessionManager
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
@@ -41,19 +34,6 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Check existing session
-        viewLifecycleOwner.lifecycleScope.launch {
-            val token = sessionManager.accessToken.firstOrNull()
-            val session = sessionManager.stationSession.firstOrNull()
-            if (token != null) {
-                if (session != null) {
-                    findNavController().navigate(R.id.action_loginFragment_to_queueFragment)
-                } else {
-                    findNavController().navigate(R.id.action_loginFragment_to_stationSelectFragment)
-                }
-            }
-        }
-
         binding.loginButton.setOnClickListener {
             val username = binding.usernameEdit.text.toString()
             val password = binding.passwordEdit.text.toString()
@@ -67,7 +47,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.exitButton.setOnClickListener {
-            requireActivity().finish()
+            requireActivity().finishAndRemoveTask()
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -79,6 +59,7 @@ class LoginFragment : Fragment() {
                     }
                     is LoginUiState.Success -> {
                         binding.progressBar.visibility = View.GONE
+                        // Navigate to Station Selection, which is the correct next step in the new flow
                         findNavController().navigate(R.id.action_loginFragment_to_stationSelectFragment)
                     }
                     is LoginUiState.Error -> {
