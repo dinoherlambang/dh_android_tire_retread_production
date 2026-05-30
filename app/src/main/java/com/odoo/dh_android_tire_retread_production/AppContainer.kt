@@ -3,10 +3,12 @@ package com.odoo.dh_android_tire_retread_production
 import android.content.Context
 import androidx.room.Room
 import com.odoo.dh_android_tire_retread_production.BuildConfig
-import com.odoo.dh_android_tire_retread_production.data.api.MobileStationApi
+import com.odoo.dh_android_tire_retread_production.data.api.*
 import com.odoo.dh_android_tire_retread_production.data.local.AppDatabase
 import com.odoo.dh_android_tire_retread_production.data.local.SessionManager
 import com.odoo.dh_android_tire_retread_production.data.repository.WorkorderRepository
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -27,9 +29,21 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
             .build()
     }
 
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(JsonRpcInterceptor())
+            .addInterceptor(AuthInterceptor(sessionManager))
+            .addInterceptor(IdempotencyInterceptor())
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
+    }
+
     private val api: MobileStationApi by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         retrofit.create(MobileStationApi::class.java)

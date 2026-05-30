@@ -32,18 +32,39 @@ class LoginViewModel(
                     "password" to password.trim()
                 ))
                 if (loginResponse.success && loginResponse.data != null) {
-                    sessionManager.saveAuthToken(loginResponse.data.access_token, loginResponse.data.expires_at)
+                    val data = loginResponse.data
+                    sessionManager.saveAuthToken(
+                        data.access_token,
+                        data.expires_at,
+                        data.roles.default_mobile_home,
+                        data.roles.can_view_dashboard
+                    )
                     
-                    val sessionResponse = repository.openSession(mapOf(
-                        "station_code" to stationCode.trim(),
-                        "device_name" to deviceName.trim()
-                    ))
-                    
-                    if (sessionResponse.success && sessionResponse.data != null) {
-                        sessionManager.saveStationSession(sessionResponse.data.station_session, stationCode.trim())
+                    if (data.roles.default_mobile_home == "dashboard") {
                         _uiState.value = LoginUiState.Success
+                        return@launch
+                    }
+
+                    // For operators, try to open station session if stationCode is provided
+                    if (stationCode.isNotBlank()) {
+                        val sessionResponse = repository.openSession(mapOf(
+                            "station_code" to stationCode.trim(),
+                            "device_name" to deviceName.trim()
+                        ))
+                        
+                        if (sessionResponse.success && sessionResponse.data != null) {
+                            sessionManager.saveStationSession(
+                                sessionResponse.data.station_session,
+                                stationCode.trim(),
+                                sessionResponse.data.station.name
+                            )
+                            _uiState.value = LoginUiState.Success
+                        } else {
+                            _uiState.value = LoginUiState.Error(sessionResponse.message ?: "Failed to open session")
+                        }
                     } else {
-                        _uiState.value = LoginUiState.Error(sessionResponse.message ?: "Failed to open session")
+                        // Go to station selection screen
+                        _uiState.value = LoginUiState.Success
                     }
                 } else {
                     _uiState.value = LoginUiState.Error(loginResponse.message ?: "Login failed")

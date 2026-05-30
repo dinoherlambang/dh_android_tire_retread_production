@@ -6,25 +6,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class
-AuthRepository @Inject constructor(
+class AuthRepository @Inject constructor(
     private val api: MobileStationApi
 ) {
-    suspend fun login(params: Map<String, String>): ApiResponse<LoginResponse> {
-        val response = api.login(params)
-        return if (response.isSuccessful) {
-            response.body() ?: ApiResponse(success = false, message = "Empty response")
+    private fun <T> handleResponse(response: retrofit2.Response<ApiResponse<T>>): ApiResponse<T> {
+        if (response.isSuccessful) {
+            val body = response.body()
+            if (body != null) {
+                if (!body.success) {
+                    throw Exception(body.message ?: "Unknown error")
+                }
+                return body
+            }
+            throw Exception("Empty response body")
         } else {
-            ApiResponse(success = false, message = response.message())
+            val errorBody = response.errorBody()?.string()
+            if (!errorBody.isNullOrBlank()) {
+                try {
+                    val json = org.json.JSONObject(errorBody)
+                    val message = json.optString("message")
+                    if (message.isNotBlank()) throw Exception(message)
+                } catch (e: Exception) { }
+            }
+            throw Exception("HTTP Error: ${response.code()} ${response.message()}")
         }
     }
 
+    suspend fun login(params: Map<String, String>): ApiResponse<LoginResponse> {
+        return handleResponse(api.login(params))
+    }
+
     suspend fun logout(): ApiResponse<Unit> {
-        val response = api.logout()
-        return if (response.isSuccessful) {
-            response.body() ?: ApiResponse(success = true)
-        } else {
-            ApiResponse(success = false, message = response.message())
-        }
+        return handleResponse(api.logout())
+    }
+
+    suspend fun getMe(): ApiResponse<UserData> {
+        return handleResponse(api.getMe())
     }
 }

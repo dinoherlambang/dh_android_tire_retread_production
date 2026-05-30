@@ -52,13 +52,17 @@ class StationSelectViewModel @Inject constructor(
             _uiState.value = StationSelectUiState.Loading
             try {
                 val params = mapOf(
-                    "station_id" to station.id.toString(),
+                    "station_code" to station.code,
                     "device_name" to android.os.Build.MODEL,
-                    "device_id" to "android_id_placeholder"
+                    "device_id" to "android_id_placeholder" // Ideally use a persistent unique ID
                 )
                 val response = stationRepository.openSession(params)
                 if (response.success && response.data != null) {
-                    sessionManager.saveStationSession(response.data.station_session, station.code)
+                    sessionManager.saveStationSession(
+                        response.data.station_session,
+                        station.code,
+                        station.name
+                    )
                     _uiState.value = StationSelectUiState.SessionOpened
                 } else {
                     _uiState.value = StationSelectUiState.Error(response.message ?: "Failed to open session")

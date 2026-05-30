@@ -8,16 +8,15 @@ class IdempotencyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         
-        // Only add Idempotency-Key for POST requests that are likely to mutate data
-        // Based on the docs: "All POST write endpoints"
-        if (request.method == "POST") {
-            val idempotencyKey = "${System.currentTimeMillis()}-${UUID.randomUUID()}"
-            val newRequest = request.newBuilder()
-                .header("Idempotency-Key", idempotencyKey)
-                .build()
-            return chain.proceed(newRequest)
+        // Add Idempotency-Key to POST requests if not already present
+        return if (request.method == "POST") {
+            val builder = request.newBuilder()
+            if (request.header("Idempotency-Key") == null) {
+                builder.addHeader("Idempotency-Key", UUID.randomUUID().toString())
+            }
+            chain.proceed(builder.build())
+        } else {
+            chain.proceed(request)
         }
-        
-        return chain.proceed(request)
     }
 }

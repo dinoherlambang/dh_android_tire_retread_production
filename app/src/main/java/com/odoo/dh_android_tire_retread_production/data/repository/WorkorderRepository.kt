@@ -25,6 +25,19 @@ class WorkorderRepository(
             }
             throw Exception("Empty response body")
         } else {
+            val errorBody = response.errorBody()?.string()
+            if (!errorBody.isNullOrBlank()) {
+                try {
+                    // Try to parse the error message from the JSON response
+                    val json = org.json.JSONObject(errorBody)
+                    val message = json.optString("message")
+                    if (message.isNotBlank()) {
+                        throw Exception(message)
+                    }
+                } catch (e: Exception) {
+                    // Fallback if not JSON or no message
+                }
+            }
             throw Exception("HTTP Error: ${response.code()} ${response.message()}")
         }
     }
@@ -66,9 +79,10 @@ class WorkorderRepository(
         return handleResponse(api.resolveWorkorder(mapOf("query_text" to search)))
     }
 
-    suspend fun markWorkorderDone(workorderId: Int): ApiResponse<Unit> {
-        val idempotencyKey = "station-done-${System.currentTimeMillis()}-${UUID.randomUUID()}"
-        return handleResponse(api.markWorkorderDone(workorderId, mapOf("idempotency_key" to idempotencyKey)))
+    suspend fun markWorkorderDone(workorderId: Int, result: String = "pass", notes: String? = null): ApiResponse<Unit> {
+        val params = mutableMapOf<String, String>("result" to result)
+        notes?.let { params["notes"] = it }
+        return handleResponse(api.markWorkorderDone(workorderId, params))
     }
 
     suspend fun heartbeat(): ApiResponse<Unit> {

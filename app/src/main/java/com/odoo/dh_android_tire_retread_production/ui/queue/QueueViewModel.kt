@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 sealed class QueueUiState {
@@ -47,24 +48,32 @@ class QueueViewModel @Inject constructor(
         refreshJob = viewModelScope.launch {
             while (isActive) {
                 fetchQueue()
-                delay(30 * 1000) // 30 seconds
+                delay(60 * 1000) // 1 minute auto-refresh
             }
         }
     }
 
     suspend fun fetchQueue() {
         try {
-            val response = repository.getQueue()
+            // Get current session directly
+            val session = sessionManager.stationSession.firstOrNull()
+            
+            val response = if (session != null) {
+                repository.getQueue()
+            } else {
+                repository.getAllWorkorders()
+            }
+            
             if (response.success && response.data != null) {
                 _uiState.value = QueueUiState.Success(response.data)
             } else {
                 if (_uiState.value !is QueueUiState.Success) {
-                    _uiState.value = QueueUiState.Error(response.message ?: "Failed to load queue")
+                    _uiState.value = QueueUiState.Error(response.message ?: "Failed to load work orders")
                 }
             }
         } catch (e: Exception) {
             if (_uiState.value !is QueueUiState.Success) {
-                _uiState.value = QueueUiState.Error(e.message ?: "Unknown error")
+                _uiState.value = QueueUiState.Error(e.message ?: "Network error")
             }
         }
     }
@@ -77,7 +86,6 @@ class QueueViewModel @Inject constructor(
                 sessionManager.clearStationSession()
                 _uiState.value = QueueUiState.StationClosed
             } catch (e: Exception) {
-                // Even if API fails, clear local and go back
                 sessionManager.clearStationSession()
                 _uiState.value = QueueUiState.StationClosed
             }
@@ -91,7 +99,7 @@ class QueueViewModel @Inject constructor(
                 stationRepository.closeSession()
                 authRepository.logout()
             } catch (e: Exception) {
-                // Ignore errors on logout
+                // Ignore
             } finally {
                 sessionManager.clear()
                 _uiState.value = QueueUiState.LoggedOut

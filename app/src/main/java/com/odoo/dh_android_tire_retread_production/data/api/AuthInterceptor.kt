@@ -13,11 +13,11 @@ class AuthInterceptor(private val sessionManager: SessionManager) : Interceptor 
 
         runBlocking {
             sessionManager.accessToken.firstOrNull()?.let {
-                requestBuilder.addHeader("Authorization", "Bearer $it")
+                requestBuilder.header("Authorization", "Bearer $it")
             }
 
             sessionManager.stationSession.firstOrNull()?.let {
-                requestBuilder.addHeader("X-Station-Session", it)
+                requestBuilder.header("X-Station-Session", it)
             }
         }
 

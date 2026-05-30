@@ -13,6 +13,8 @@ import com.odoo.dh_android_tire_retread_production.R
 import com.odoo.dh_android_tire_retread_production.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -59,8 +61,15 @@ class LoginFragment : Fragment() {
                     }
                     is LoginUiState.Success -> {
                         binding.progressBar.visibility = View.GONE
-                        // Navigate to Station Selection, which is the correct next step in the new flow
-                        findNavController().navigate(R.id.action_loginFragment_to_stationSelectFragment)
+                        
+                        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                            val defaultHome = viewModel.sessionManager.defaultMobileHome.firstOrNull()
+                            if (defaultHome == "dashboard") {
+                                findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
+                            } else {
+                                findNavController().navigate(R.id.action_loginFragment_to_stationSelectFragment)
+                            }
+                        }
                     }
                     is LoginUiState.Error -> {
                         binding.loginButton.isEnabled = true

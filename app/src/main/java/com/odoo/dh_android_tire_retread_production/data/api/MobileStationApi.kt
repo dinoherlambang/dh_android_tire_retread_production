@@ -12,8 +12,15 @@ interface MobileStationApi {
     @POST("api/v1/mobile/auth/logout")
     suspend fun logout(): Response<ApiResponse<Unit>>
 
-    @GET("api/v1/mobile/stations")
-    suspend fun getStations(): Response<ApiResponse<MasterDataResponse>>
+    @GET("api/v1/mobile/auth/me")
+    suspend fun getMe(): Response<ApiResponse<UserData>>
+
+    @GET("api/v1/mobile/dashboard")
+    suspend fun getDashboard(
+        @Query("date_range") dateRange: String? = null,
+        @Query("date_from") dateFrom: String? = null,
+        @Query("date_to") dateTo: String? = null
+    ): Response<ApiResponse<DashboardData>>
 
     @POST("api/v1/mobile/station/session/open")
     suspend fun openSession(@Body params: Map<String, String>): Response<ApiResponse<StationSessionResponse>>
@@ -48,6 +55,12 @@ interface MobileStationApi {
 
     @POST("api/v1/mobile/station/workorders/resolve")
     suspend fun resolveWorkorder(@Body params: Map<String, String>): Response<ApiResponse<QueueItem>>
+
+    @GET("api/v1/mobile/workorders")
+    suspend fun getAllWorkorders(
+        @Query("search") search: String? = null,
+        @Query("state") state: String? = null
+    ): Response<ApiResponse<QueueData>>
 
     @GET("api/v1/mobile/master-data")
     suspend fun getMasterData(

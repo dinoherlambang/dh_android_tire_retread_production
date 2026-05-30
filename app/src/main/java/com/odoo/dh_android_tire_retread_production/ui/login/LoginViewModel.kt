@@ -20,7 +20,7 @@ sealed class LoginUiState {
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val sessionManager: SessionManager
+    val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -38,7 +38,13 @@ class LoginViewModel @Inject constructor(
                 )
                 val response = authRepository.login(params)
                 if (response.success && response.data != null) {
-                    sessionManager.saveAuthToken(response.data.access_token, response.data.expires_at)
+                    val data = response.data
+                    sessionManager.saveAuthToken(
+                        data.access_token,
+                        data.expires_at,
+                        data.roles.default_mobile_home,
+                        data.roles.can_view_dashboard
+                    )
                     _uiState.value = LoginUiState.Success
                 } else {
                     _uiState.value = LoginUiState.Error(response.message ?: "Login failed")
